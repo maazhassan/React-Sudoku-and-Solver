@@ -1,17 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+
+
+const Square = (props) => {
+
+}
+
+
+class Grid extends React.Component {
+    render() {
+        return
+    }
+}
+
+class Game extends React.Component {
+    render() {
+        return
+    }
+}
+
+
+const Counter = (props) => {
+    const [count, setCount] = useState(0)
+
+    return (
+        <div>
+            <p>Hello, {props.name}</p>
+            <p>Counter is {count}</p>
+            <button onClick={() => setCount(count + 1)}>
+              Increment
+            </button>
+        </div>
+    );
+}
+
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <Counter name="Maaz" />,
+    document.getElementById('root')
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+
