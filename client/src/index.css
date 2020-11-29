@@ -12,7 +12,7 @@ code {
 }
 
 .square {
-    background: #fff;
+    background: rgb(245, 245, 245);
     border: 1px solid rgb(0, 0, 0);
     float: left;
     font-size: 18px;
@@ -30,13 +30,33 @@ code {
     outline: none;
 }
 
+.row-piece {
+    display: inline-block;
+    margin-right: 1px;
+    vertical-align: top;
+}
+
 .grid-row {
     clear: both;
     content: "";
     display: table;
+    margin: 0
+}
+
+.grid-row-3 {
+    clear: both;
+    content: "";
+    display: table;
+    margin-bottom: 1px;
 }
 
 .game-grid {
-    width: auto;
     margin: auto;
+    width: 50%
+}
+
+.game-container {
+    margin: auto;
+    width: 50%;
+    padding-top: 140px;
 }

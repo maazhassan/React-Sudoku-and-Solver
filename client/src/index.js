@@ -26,13 +26,27 @@ class Row extends React.Component {
     }
 
     render() {
-        const indexes = [...Array(9).keys()];
+        const indexes1 = [0, 1, 2];
+        const indexes2 = [3, 4, 5];
+        const indexes3 = [6, 7, 8];
 
         return (
-            <div className="grid-row">
-                {indexes.map((number) => 
-                    this.renderSquare(number)
-                )}
+            <div className={this.props.rowClassName}>
+                <div className="row-piece">
+                    {indexes1.map((number) => 
+                        this.renderSquare(number)
+                    )}
+                </div>
+                <div className="row-piece">
+                    {indexes2.map((number) => 
+                        this.renderSquare(number)
+                    )}
+                </div>
+                <div className="row-piece">
+                    {indexes3.map((number) => 
+                        this.renderSquare(number)
+                    )}
+                </div>
             </div>
         );
     }
@@ -48,13 +62,14 @@ class Grid extends React.Component {
                 squares={gameArray[row]}
                 onClick={(y, x) => this.props.onClick(y, x)}
                 rowNum={row}
+                rowClassName={(row == 2 || row == 5) ? "grid-row-3" : "grid-row"}
             />
         );
     }
 
     render() {
         return (
-            <div>
+            <div className="game-grid">
                 {this.renderRow(0)}
                 {this.renderRow(1)}
                 {this.renderRow(2)}
@@ -74,13 +89,13 @@ class Game extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            gameArray: [[0,0,1,3,0,4,6,3,5],
+            gameArray: [[0,0,1,3,0,0,0,0,0],
                         [0,0,1,3,0,4,6,3,5],
-                        [0,0,1,3,0,4,6,3,5],
-                        [0,0,1,3,0,4,6,3,5],
-                        [0,0,1,3,0,4,6,3,5],
-                        [0,0,1,3,0,4,6,3,5],
-                        [0,0,1,3,0,4,6,3,5],
+                        [0,0,1,3,8,0,0,3,5],
+                        [0,0,1,3,0,4,0,3,5],
+                        [2,0,1,3,0,4,6,0,5],
+                        [0,0,1,3,0,4,9,3,5],
+                        [0,0,1,3,0,4,6,2,5],
                         [7,0,1,3,0,4,6,3,5],
                         [0,0,1,3,0,4,6,3,5]],
         };
@@ -88,14 +103,14 @@ class Game extends React.Component {
 
     handleClick(y, x) {
         const grid = this.state.gameArray;
-        grid[y][x] = 1;
+        grid[y][x] = 5;
         
         this.setState({gameArray: grid});
     }
 
     render() {
         return (
-            <div className="game-grid">
+            <div className="game-container">
                 <Grid
                     gameArray={this.state.gameArray}
                     onClick={(y, x) => this.handleClick(y, x)}
