@@ -5,7 +5,7 @@ import './index.css';
 
 const Square = (props) => {
     return (
-        <button className="square" onClick={props.onClick}>
+        <button className="square" onClick={props.onClick} onContextMenu={props.onContextMenu}>
             {props.value}
         </button>
     );
@@ -20,6 +20,7 @@ class Row extends React.Component {
             <Square
                 value={value === 0 ? "" : value.toString()}
                 onClick={() => this.props.onClick(this.props.rowNum, i)}
+                onContextMenu={(e) => this.props.onContextMenu(e, this.props.rowNum, i)}
                 key={i.toString()}
             />
         );
@@ -61,6 +62,7 @@ class Grid extends React.Component {
             <Row
                 squares={gameArray[row]}
                 onClick={(y, x) => this.props.onClick(y, x)}
+                onContextMenu={(e, y, x) => this.props.onContextMenu(e, y, x)}
                 rowNum={row}
                 rowClassName={(row == 2 || row == 5) ? "grid-row-3" : "grid-row"}
             />
@@ -108,12 +110,22 @@ class Game extends React.Component {
         this.setState({gameArray: grid});
     }
 
+    handleRightClick(e, y, x) {
+        e.preventDefault();
+
+        const grid = this.state.gameArray;
+        grid[y][x] = 0;
+
+        this.setState({gameArray: grid});
+    }
+
     render() {
         return (
             <div className="game-container">
                 <Grid
                     gameArray={this.state.gameArray}
                     onClick={(y, x) => this.handleClick(y, x)}
+                    onContextMenu={(e, y, x) => this.handleRightClick(e, y, x)}
                 />    
             </div>
         );
