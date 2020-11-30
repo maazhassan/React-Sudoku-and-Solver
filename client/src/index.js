@@ -5,7 +5,7 @@ import './index.css';
 
 const Square = props => {
     return (
-        <button className={props.className} onClick={props.onClick} onContextMenu={props.onContextMenu}>
+        <button className={props.className} onMouseUp={props.onClick} onContextMenu={props.onContextMenu}>
             {props.value}
         </button>
     );
