@@ -11,28 +11,32 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-.square {
+.square, .square-selected {
     background: rgb(245, 245, 245);
     border: 1px solid rgb(0, 0, 0);
     float: left;
-    font-size: 18px;
+    font-size: 24px;
     font-weight: bold;
     line-height: 34px;
-    height: 34px;
+    height: 60px;
     margin-right: -1px;
     margin-top: -1px;
     padding: 0;
     text-align: center;
-    width: 34px;
+    width: 60px;
 }
   
-.square:focus {
+.square:focus, .square-selected:focus {
     outline: none;
+}
+
+.square-selected {
+    background: rgb(148, 196, 142);
 }
 
 .row-piece {
     display: inline-block;
-    margin-right: 1px;
+    margin-right: 2px;
     vertical-align: top;
 }
 
@@ -47,16 +51,21 @@ code {
     clear: both;
     content: "";
     display: table;
-    margin-bottom: 1px;
+    margin-bottom: 2px;
 }
 
 .game-grid {
-    margin: auto;
-    width: 50%
+    display: inline-block;
+    background-color: black;
+    padding-top: 1px;
+    border-width: 2px 1px 2px 2px;
+    border-style: solid;
+    border-color: black;
 }
 
 .game-container {
     margin: auto;
     width: 50%;
-    padding-top: 140px;
+    padding-top: 130px;
+    text-align: center;
 }
