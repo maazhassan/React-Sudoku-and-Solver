@@ -5,7 +5,11 @@ import './index.css';
 
 const Square = props => {
     return (
-        <button className={props.className} onMouseDown={props.onClick} onContextMenu={props.onContextMenu}>
+        <button 
+            className={props.className} 
+            onMouseDown={props.onClick} 
+            onContextMenu={e => e.preventDefault()}
+        >
             {props.value}
         </button>
     );
@@ -22,7 +26,6 @@ const Row = props => {
             <Square
                 value={value === 0 ? "" : value.toString()}
                 onClick={(e) => props.onClick(e, rowNum, i)}
-                onContextMenu={(e) => props.onContextMenu(e)}
                 key={i.toString()}
                 className={(i === selX && rowNum === selY) ? "square-selected" : "square"}
             />
@@ -63,7 +66,6 @@ const Grid = React.forwardRef((props, ref) => {
             <Row
                 squares={gameArray[row]}
                 onClick={(e, y, x) => props.onClick(e, y, x)}
-                onContextMenu={(e) => props.onContextMenu(e)}
                 rowNum={row}
                 rowClassName={(row === 2 || row === 5) ? "grid-row-3" : "grid-row"}
                 selected={props.selected}
@@ -72,7 +74,12 @@ const Grid = React.forwardRef((props, ref) => {
     };
 
     return (
-        <div className="game-grid" onBlur={(e) => props.onClickOutside(e)} ref={ref}>
+        <div 
+            className="game-grid" 
+            onBlur={(e) => props.onClickOutside(e)} 
+            ref={ref}
+            onKeyDown={(e) => props.onKeyDown(e)}
+        >
             {renderRow(0)}
             {renderRow(1)}
             {renderRow(2)}
@@ -111,18 +118,27 @@ class Game extends React.Component {
         if (e.button === 2) {
             const grid = this.state.gameArray;
             grid[y][x] = 0;
-
             this.setState({gameArray: grid});
         }
-    }
-
-    handleRightClick(e) {
-        e.preventDefault();
     }
 
     handleClickOutside(e) {
         if (!this.ref.current.contains(e.relatedTarget)) {
             this.setState({selected: [null, null]});
+        }
+    }
+
+    handleKeyDown(e) {
+        const selected = this.state.selected;
+        if (selected !== [null, null]) {
+            const allowed = ['1','2','3','4','5','6','7','8','9','Backspace']
+            const key = e.key;
+            if (allowed.includes(key)) {
+                const [y, x] = selected;
+                const grid = this.state.gameArray;
+                grid[y][x] = key === 'Backspace' ? 0 : parseInt(key);
+                this.setState({gameArray: grid});
+            }
         }
     }
 
@@ -132,10 +148,10 @@ class Game extends React.Component {
                 <Grid
                     gameArray={this.state.gameArray}
                     onClick={(e, y, x) => this.handleClick(e, y, x)}
-                    onContextMenu={(e) => this.handleRightClick(e)}
                     selected={this.state.selected}
                     onClickOutside={(e) => this.handleClickOutside(e)}
                     ref={this.ref}
+                    onKeyDown={(e) => this.handleKeyDown(e)}
                 />    
             </div>
         );
