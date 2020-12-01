@@ -5,7 +5,7 @@ import './index.css';
 
 const Square = props => {
     return (
-        <button className={props.className} onMouseUp={props.onClick} onContextMenu={props.onContextMenu}>
+        <button className={props.className} onMouseDown={props.onClick} onContextMenu={props.onContextMenu}>
             {props.value}
         </button>
     );
@@ -21,8 +21,8 @@ const Row = props => {
         return (
             <Square
                 value={value === 0 ? "" : value.toString()}
-                onClick={() => props.onClick(rowNum, i)}
-                onContextMenu={(e) => props.onContextMenu(e, rowNum, i)}
+                onClick={(e) => props.onClick(e, rowNum, i)}
+                onContextMenu={(e) => props.onContextMenu(e)}
                 key={i.toString()}
                 className={(i === selX && rowNum === selY) ? "square-selected" : "square"}
             />
@@ -62,8 +62,8 @@ const Grid = React.forwardRef((props, ref) => {
         return (
             <Row
                 squares={gameArray[row]}
-                onClick={(y, x) => props.onClick(y, x)}
-                onContextMenu={(e, y, x) => props.onContextMenu(e, y, x)}
+                onClick={(e, y, x) => props.onClick(e, y, x)}
+                onContextMenu={(e) => props.onContextMenu(e)}
                 rowNum={row}
                 rowClassName={(row === 2 || row === 5) ? "grid-row-3" : "grid-row"}
                 selected={props.selected}
@@ -105,20 +105,19 @@ class Game extends React.Component {
         };
     }
 
-    handleClick(y, x) {
+    handleClick(e, y, x) {
         this.setState({selected: [y, x]});
+
+        if (e.button === 2) {
+            const grid = this.state.gameArray;
+            grid[y][x] = 0;
+
+            this.setState({gameArray: grid});
+        }
     }
 
-    handleRightClick(e, y, x) {
+    handleRightClick(e) {
         e.preventDefault();
-
-        const grid = this.state.gameArray;
-        grid[y][x] = 0;
-
-        this.setState({
-            gameArray: grid,
-            selected: [y,x],
-        });
     }
 
     handleClickOutside(e) {
@@ -132,8 +131,8 @@ class Game extends React.Component {
             <div className="game-container">
                 <Grid
                     gameArray={this.state.gameArray}
-                    onClick={(y, x) => this.handleClick(y, x)}
-                    onContextMenu={(e, y, x) => this.handleRightClick(e, y, x)}
+                    onClick={(e, y, x) => this.handleClick(e, y, x)}
+                    onContextMenu={(e) => this.handleRightClick(e)}
                     selected={this.state.selected}
                     onClickOutside={(e) => this.handleClickOutside(e)}
                     ref={this.ref}
