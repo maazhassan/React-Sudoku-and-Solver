@@ -21,13 +21,20 @@ const Row = props => {
         const value = props.squares[i]
         const [selY, selX] = props.selected;
         const rowNum = props.rowNum;
+        let classes = "square";
+        if (i === selX && rowNum === selY) {
+            classes += " selected";
+        }
+        if (value === 0) {
+            classes += " user-inputted";
+        }
 
         return (
             <Square
                 value={value === 0 ? "" : value.toString()}
                 onClick={(e) => props.onClick(e, rowNum, i)}
                 key={i.toString()}
-                className={(i === selX && rowNum === selY) ? "square-selected" : "square"}
+                className={classes}
             />
         );
     };
@@ -99,18 +106,30 @@ class Game extends React.Component {
         super(props);
         this.ref = React.createRef();
         this.state = {
-            gameArray: [[5,3,4,6,7,8,9,1,2],
-                        [6,7,2,1,9,5,3,4,8],
-                        [1,9,8,3,4,2,5,6,7],
-                        [8,5,9,7,6,1,4,2,3],
-                        [4,2,6,8,5,3,7,9,1],
-                        [7,1,3,9,2,4,8,5,6],
-                        [9,6,1,5,3,7,2,8,4],
-                        [2,8,7,4,1,9,6,3,5],
-                        [3,4,5,2,8,6,1,7,0]],
+            gameArray: Array(9).fill(Array(9).fill(0)),
+            playable: [],
             selected: [null, null],
             solved: false,
         };
+    }
+
+    componentDidMount() {
+        fetch('/server/puzzle').then(res => res.json()).then(data => {
+            console.log(data['puzzle']);
+            this.setState({gameArray: data['puzzle']});
+            const grid = data['puzzle'];
+            const playMap = grid.map(row => {
+                return row.map(elem => {
+                    if (elem === 0) {
+                        return 0;
+                    }
+                    else {
+                        return -1;
+                    }
+                });
+            });
+            this.setState({playable: playMap})
+        });
     }
 
     handleClick(e, y, x) {

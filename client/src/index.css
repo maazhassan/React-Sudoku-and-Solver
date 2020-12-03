@@ -5,7 +5,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-.square, .square-selected {
+.square {
     background: rgb(245, 245, 245);
     border: 1px solid rgb(0, 0, 0);
     float: left;
@@ -20,12 +20,16 @@ body {
     width: 60px;
 }
   
-.square:focus, .square-selected:focus {
+.square:focus {
     outline: none;
 }
 
-.square-selected {
+.selected {
     background: rgb(148, 196, 142);
+}
+
+.user-inputted {
+    color: rgb(178, 44, 255)
 }
 
 .row-piece {
