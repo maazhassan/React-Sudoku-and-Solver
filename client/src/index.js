@@ -159,7 +159,11 @@ class Game extends React.Component {
                     ref={this.ref}
                     onKeyDown={(e) => this.handleKeyDown(e)}
                 />
-                <p>{solved ? "Solved" : "Not solved"}</p>
+                <div className="toolbar">
+                    <div className="toolbar-elem"><button>New Puzzle</button></div>
+                    <div className="toolbar-elem"><button>Solve</button></div>
+                    <div className="toolbar-elem"><span>Status: {solved ? "Solved" : "Unsolved"}</span></div>
+                </div>
             </div>
         );
     }
