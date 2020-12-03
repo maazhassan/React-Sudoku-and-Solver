@@ -21,11 +21,13 @@ const Row = props => {
         const value = props.squares[i]
         const [selY, selX] = props.selected;
         const rowNum = props.rowNum;
+        const playValue = props.playable[i];
+
         let classes = "square";
         if (i === selX && rowNum === selY) {
             classes += " selected";
         }
-        if (value === 0) {
+        if (playValue) {
             classes += " user-inputted";
         }
 
@@ -68,10 +70,12 @@ const Row = props => {
 const Grid = React.forwardRef((props, ref) => {
     const renderRow = row => {
         const gameArray = props.gameArray;
+        const playable = props.playable;
 
         return (
             <Row
                 squares={gameArray[row]}
+                playable={playable[row]}
                 onClick={(e, y, x) => props.onClick(e, y, x)}
                 rowNum={row}
                 rowClassName={(row === 2 || row === 5) ? "grid-row-3" : "grid-row"}
@@ -107,7 +111,7 @@ class Game extends React.Component {
         this.ref = React.createRef();
         this.state = {
             gameArray: Array(9).fill(Array(9).fill(0)),
-            playable: [],
+            playable: Array(9).fill(Array(9).fill(0)),
             selected: [null, null],
             solved: false,
         };
@@ -121,14 +125,14 @@ class Game extends React.Component {
             const playMap = grid.map(row => {
                 return row.map(elem => {
                     if (elem === 0) {
-                        return 0;
+                        return 1;
                     }
                     else {
-                        return -1;
+                        return 0;
                     }
                 });
             });
-            this.setState({playable: playMap})
+            this.setState({playable: playMap});
         });
     }
 
@@ -172,6 +176,7 @@ class Game extends React.Component {
             <div className="game-container">
                 <Grid
                     gameArray={this.state.gameArray}
+                    playable={this.state.playable}
                     onClick={(e, y, x) => this.handleClick(e, y, x)}
                     selected={this.state.selected}
                     onClickOutside={(e) => this.handleClickOutside(e)}
