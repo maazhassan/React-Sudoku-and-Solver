@@ -170,13 +170,23 @@ class Game extends React.Component {
                     }
                 });
             });
-            this.setState({playable: playMap});
+            this.setState({
+                playable: playMap,
+                solved: false,
+            });
+        });
+    }
+
+    solveBoard() {
+        const solvedBoard = solve(this.state.gameArray, this.state.playable);
+        this.setState({
+            gameArray: solvedBoard,
+            solved: true,
         });
     }
 
     render() {
         const solved = this.state.solved;
-        const valid = checkValid(this.state.gameArray);
 
         return (
             <div className="game-container">
@@ -191,7 +201,7 @@ class Game extends React.Component {
                 />
                 <div className="toolbar">
                     <div className="toolbar-elem"><button onClick={() => this.fetchPuzzle()}>New Puzzle</button></div>
-                    <div className="toolbar-elem"><button>Solve</button></div>
+                    <div className="toolbar-elem"><button onClick={() => this.solveBoard()}>Solve</button></div>
                     <div className="toolbar-elem"><span>Status: {solved ? "Solved" : "Unsolved"}</span></div>
                 </div>
             </div>
@@ -260,4 +270,53 @@ function checkWin(board) {
         if (board[i].includes(0)) return false;
     }
     return checkValid(board);
+}
+
+function solve(board, playable) {
+    let gameBoard = board;
+
+    for (let i = 0; i < gameBoard.length; i++) {
+        for (let j = 0; j < gameBoard.length; j++) {
+            if (playable[i][j]) gameBoard[i][j] = 0;
+        }
+    }
+
+    let i = 0, squareValid;
+    while (i < gameBoard.length) {  // rows
+        let j = 0;
+        while (j < gameBoard.length) {  // cols
+            if (playable[i][j]) {
+                while (gameBoard[i][j] < 9) {
+                    gameBoard[i][j]++;
+                    if (!checkValid(gameBoard)) {
+                        squareValid = false;
+                        continue;
+                    } 
+                    else {
+                        squareValid = true;
+                        break;
+                    }
+                }
+                if (!squareValid) {
+                    gameBoard[i][j] = 0;
+                    if (j === 0) {
+                        i--;
+                        j = gameBoard.length-2;
+                    }
+                    else j -= 2;
+
+                    while (!playable[i][j+1]) {
+                        if (j+1 === 0) {
+                            i--;
+                            j = gameBoard.length-2;
+                        }
+                        else j -= 1;
+                    }
+                }
+            }
+            j++;
+        }
+        i++;
+    }
+    return gameBoard;
 }
