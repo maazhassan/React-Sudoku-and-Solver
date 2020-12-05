@@ -137,12 +137,14 @@ class Game extends React.Component {
     }
 
     handleClick(e, y, x) {
-        this.setState({selected: [y, x]});
+        if (this.state.playable[y][x]) {
+            this.setState({selected: [y, x]});
 
-        if (e.button === 2 && !this.state.solved) {
-            const grid = this.state.gameArray;
-            grid[y][x] = 0;
-            this.setState({gameArray: grid});
+            if (e.button === 2 && !this.state.solved) {
+                const grid = this.state.gameArray;
+                grid[y][x] = 0;
+                this.setState({gameArray: grid});
+            }
         }
     }
 
@@ -154,7 +156,7 @@ class Game extends React.Component {
 
     handleKeyDown(e) {
         const selected = this.state.selected;
-        if (selected !== [null, null] && !this.state.solved) {
+        if (selected[0] !== null && !this.state.solved) {
             const allowed = ['0','1','2','3','4','5','6','7','8','9','Backspace']
             const key = e.key;
             if (allowed.includes(key)) {

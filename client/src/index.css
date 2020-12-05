@@ -25,11 +25,11 @@ body {
 }
 
 .selected {
-    background: rgb(148, 196, 142);
+    background: rgb(184, 214, 223);
 }
 
 .user-inputted {
-    color: rgb(178, 44, 255)
+    color: rgb(33, 95, 165)
 }
 
 .row-piece {
