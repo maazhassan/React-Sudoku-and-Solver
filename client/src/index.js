@@ -118,22 +118,7 @@ class Game extends React.Component {
     }
 
     componentDidMount() {
-        fetch('/server/puzzle').then(res => res.json()).then(data => {
-            console.log(data['puzzle']);
-            this.setState({gameArray: data['puzzle']});
-            const grid = data['puzzle'];
-            const playMap = grid.map(row => {
-                return row.map(elem => {
-                    if (elem === 0) {
-                        return 1;
-                    }
-                    else {
-                        return 0;
-                    }
-                });
-            });
-            this.setState({playable: playMap});
-        });
+        this.fetchPuzzle();
     }
 
     handleClick(e, y, x) {
@@ -171,6 +156,24 @@ class Game extends React.Component {
         }
     }
 
+    fetchPuzzle() {
+        fetch('/server/puzzle').then(res => res.json()).then(data => {
+            this.setState({gameArray: data['puzzle']});
+            const grid = data['puzzle'];
+            const playMap = grid.map(row => {
+                return row.map(elem => {
+                    if (elem === 0) {
+                        return 1;
+                    }
+                    else {
+                        return 0;
+                    }
+                });
+            });
+            this.setState({playable: playMap});
+        });
+    }
+
     render() {
         const solved = this.state.solved;
         const valid = checkValid(this.state.gameArray);
@@ -187,7 +190,7 @@ class Game extends React.Component {
                     onKeyDown={(e) => this.handleKeyDown(e)}
                 />
                 <div className="toolbar">
-                    <div className="toolbar-elem"><button>New Puzzle</button></div>
+                    <div className="toolbar-elem"><button onClick={() => this.fetchPuzzle()}>New Puzzle</button></div>
                     <div className="toolbar-elem"><button>Solve</button></div>
                     <div className="toolbar-elem"><span>Status: {solved ? "Solved" : "Unsolved"}</span></div>
                 </div>
