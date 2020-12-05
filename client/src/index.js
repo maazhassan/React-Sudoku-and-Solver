@@ -173,6 +173,7 @@ class Game extends React.Component {
 
     render() {
         const solved = this.state.solved;
+        const valid = checkValid(this.state.gameArray);
 
         return (
             <div className="game-container">
@@ -202,21 +203,30 @@ ReactDOM.render(
 );
 
 
-function checkWin(board) {
+function checkValid(board) {
     for (let i = 0; i < board.length; i++) {
+        let nums = 0;
         // Rows
-        if ((board[i].includes(0)) || (new Set(board[i]).size !== board[i].length)) {
-            return false;
+        for (let j = 0; j < board.length; j++) {
+            if (board[i][j] !== 0) nums++;
         }
+        let rowSet = new Set(board[i]);
+        rowSet.delete(0);
+        if (rowSet.size !== nums) return false;
+
+        nums = 0;
 
         // Columns
         let col = [];
         for (let j = 0; j < board.length; j++) {
             col.push(board[j][i])
+            if (board[j][i] !== 0) nums++;
         }
-        if ((col.includes(0)) || (new Set(col).size !== col.length)) {
-            return false;
-        }
+        let colSet = new Set(col);
+        colSet.delete(0);
+        if (colSet.size !== nums) return false;
+
+        nums = 0;
 
         // Squares
         let square = [];
@@ -231,9 +241,20 @@ function checkWin(board) {
         square.push(board[startY+2][startX])
         square.push(board[startY+2][startX+1])
         square.push(board[startY+2][startX+2])
-        if ((square.includes(0)) || (new Set(square).size !== square.length)) {
-            return false;
+
+        for (let j = 0; j < square.length; j++) {
+            if (square[j] !== 0) nums++;
         }
+        let squareSet = new Set(square);
+        squareSet.delete(0);
+        if (squareSet.size !== nums) return false;
     }
     return true;
+}
+
+function checkWin(board) {
+    for (let i = 0; i < board.length; i++) {
+        if (board[i].includes(0)) return false;
+    }
+    return checkValid(board);
 }
