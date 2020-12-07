@@ -114,6 +114,7 @@ class Game extends React.Component {
             playable: Array(9).fill(Array(9).fill(0)),
             selected: [null, null],
             solved: false,
+            editing: false,
         };
     }
 
@@ -185,6 +186,46 @@ class Game extends React.Component {
         });
     }
 
+    editBoard() {
+        this.setState({
+            gameArray: Array(9).fill().map(() => Array(9).fill(0)),
+            playable: Array(9).fill().map(() => Array(9).fill(1)),
+            solved: false,
+            editing: true,
+        })
+    }
+
+    confirmEdit() {
+        const grid = this.state.gameArray;
+        let counter = 0;
+        for (let i = 0; i < grid.length; i++) {
+            for (let j = 0; j < grid.length; j++) {
+                if (grid[i][j] != 0) counter++;
+            }
+        }
+        if (counter < 17) return;
+        if (!checkValid(grid)) return;
+        const playMap = grid.map(row => {
+            return row.map(elem => {
+                if (elem === 0) {
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            });
+        });
+        this.setState({
+            playable: playMap,
+            editing: false,
+        });
+    }
+
+    cancelEdit() {
+        this.setState({editing: false});
+        this.fetchPuzzle();
+    }
+
     render() {
         const solved = this.state.solved;
 
@@ -200,9 +241,28 @@ class Game extends React.Component {
                     onKeyDown={(e) => this.handleKeyDown(e)}
                 />
                 <div className="toolbar">
-                    <div className="toolbar-elem"><button onClick={() => this.fetchPuzzle()}>New Puzzle</button></div>
-                    <div className="toolbar-elem"><button onClick={() => this.solveBoard()}>Solve</button></div>
-                    <div className="toolbar-elem"><span>Status: {solved ? "Solved" : "Unsolved"}</span></div>
+                    <div className="top-row">
+                        <div className="toolbar-elem">
+                            <button onClick={() => this.fetchPuzzle()} disabled={this.state.editing}>New Puzzle</button>
+                        </div>
+                        <div className="toolbar-elem">
+                            <button onClick={() => this.solveBoard()} disabled={this.state.editing}>Solve</button>
+                        </div>
+                        <div className="toolbar-elem">
+                            <span>Status: {solved ? "Solved" : "Unsolved"}</span>
+                        </div>
+                    </div>
+                    <div className="bottom-row">
+                        <div className="toolbar-elem">
+                            <button onClick={() => this.editBoard()}>Set Board</button>
+                        </div>
+                        <div className="toolbar-elem">
+                            <button onClick={() => this.confirmEdit()} disabled={!this.state.editing}>Confirm</button>
+                        </div>
+                        <div className="toolbar-elem">
+                            <button onClick={() => this.cancelEdit()} disabled={!this.state.editing}>Cancel</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
