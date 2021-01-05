@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
 
 
 const Square = props => {
@@ -116,10 +118,21 @@ class Game extends React.Component {
             solved: false,
             editing: false,
         };
+        this.handleUnload = this.handleUnload.bind(this);
     }
 
     componentDidMount() {
-        this.fetchPuzzle();
+        const cookie = cookies.get('gameState');
+        if (cookie) this.parseCookie(cookie);
+        else {
+            this.fetchPuzzle();
+            this.setCookie();
+        }
+        window.addEventListener('beforeunload', this.handleUnload);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('beforeunload', this.handleUnload);
     }
 
     handleClick(e, y, x) {
@@ -157,6 +170,10 @@ class Game extends React.Component {
         }
     }
 
+    handleUnload() {
+        this.setCookie();
+    }
+
     fetchPuzzle() {
         fetch('/server/puzzle').then(res => res.json()).then(data => {
             this.setState({gameArray: data['puzzle']});
@@ -176,6 +193,25 @@ class Game extends React.Component {
                 solved: false,
             });
         });
+    }
+
+    parseCookie(data) {
+        this.setState({
+            gameArray: data['gameArray'],
+            playable: data['playable'],
+            solved: data['solved'],
+            editing: data['editing'],
+        });
+    }
+
+    setCookie() {
+        const data = {
+            'gameArray': this.state.gameArray,
+            'playable': this.state.playable,
+            'solved': this.state.solved,
+            'editing': this.state.editing,
+        };
+        cookies.set('gameState', data, {path: '/', maxAge: 259200});
     }
 
     solveBoard() {
@@ -200,7 +236,7 @@ class Game extends React.Component {
         let counter = 0;
         for (let i = 0; i < grid.length; i++) {
             for (let j = 0; j < grid.length; j++) {
-                if (grid[i][j] != 0) counter++;
+                if (grid[i][j] !== 0) counter++;
             }
         }
         if (counter < 17) return;
